@@ -104,8 +104,8 @@ namespace App {
             return _bridge.BuyHero(_accountManager.Account, count, category, isHeroS);
         }
 
-        public Task<bool> UpgradeHero(int baseId, int materialId) {
-            return _bridge.UpgradeHero(_accountManager.Account, baseId, materialId);
+        public Task<HeroActionResult> UpgradeHero(int baseId, int materialId, string priceWei) {
+            return _bridge.UpgradeHero(_accountManager.Account, baseId, materialId, priceWei);
         }
 
         public Task<bool> ClaimHero() {
@@ -120,16 +120,28 @@ namespace App {
             return _bridge.ProcessTokenRequests(_accountManager.Account);
         }
 
-        public Task<bool> HasPendingHeroRandomization(int heroId) {
-            return _bridge.HasPendingHeroRandomization(heroId);
+        public Task<HeroActionResult> ResetSkill(int heroId, string priceWei) {
+            return _bridge.ResetSkill(_accountManager.Account, heroId, priceWei);
         }
 
-        public Task<bool> RandomizeHeroAbilities(int heroId) {
-            return _bridge.RandomizeHeroAbilities(_accountManager.Account, heroId);
+        public Task<HeroActionResult> ResetSkin(int heroId, string priceWei) {
+            return _bridge.ResetSkin(_accountManager.Account, heroId, priceWei);
         }
 
-        public Task<bool> ProcessHeroRandomizeAbilities(int heroId) {
-            return _bridge.ProcessHeroRandomizeAbilities(_accountManager.Account, heroId);
+        public Task<string> GetUpgradeNativePrice(int rarity, int level) {
+            return _bridge.GetUpgradeNativePrice(rarity, level);
+        }
+
+        public Task<string> GetResetSkillNativePrice(int rarity, int times) {
+            return _bridge.GetResetSkillNativePrice(rarity, times);
+        }
+
+        public Task<string> GetResetSkinNativePrice(int rarity) {
+            return _bridge.GetResetSkinNativePrice(rarity);
+        }
+
+        public Task<string> GetNativeRate() {
+            return _bridge.GetNativeRate();
         }
 
         public Task<bool> IsSuperBoxEnabled() {

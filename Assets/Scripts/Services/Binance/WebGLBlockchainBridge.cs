@@ -255,17 +255,76 @@ namespace App {
             }
         }
 
-        public async Task<bool> UpgradeHero(string walletAddress, int baseId, int materialId) {
+        public async Task<HeroActionResult> UpgradeHero(string walletAddress, int baseId, int materialId,
+            string priceWei) {
+            var data = new JObject {
+                ["walletAddress"] = walletAddress,
+                ["baseId"] = baseId,
+                ["materialId"] = materialId,
+                ["priceWei"] = priceWei
+            };
+            return await CallHeroAction(BlockChainCommand.UPGRADE_HERO, data);
+        }
+
+        public async Task<HeroActionResult> ResetSkill(string walletAddress, int heroId, string priceWei) {
+            var data = new JObject {
+                ["walletAddress"] = walletAddress,
+                ["heroId"] = heroId,
+                ["priceWei"] = priceWei
+            };
+            return await CallHeroAction(BlockChainCommand.RESET_SKILL, data);
+        }
+
+        public async Task<HeroActionResult> ResetSkin(string walletAddress, int heroId, string priceWei) {
+            var data = new JObject {
+                ["walletAddress"] = walletAddress,
+                ["heroId"] = heroId,
+                ["priceWei"] = priceWei
+            };
+            return await CallHeroAction(BlockChainCommand.RESET_SKIN, data);
+        }
+
+        private async Task<HeroActionResult> CallHeroAction(string command, JObject data) {
             try {
                 _logManager.Log();
-                var data = new JObject {
-                    ["walletAddress"] = walletAddress,
-                    ["baseId"] = baseId,
-                    ["materialId"] = materialId
-                };
-                var response = await _unityCommunication.UnityToReact.CallBlockChain(BlockChainCommand.UPGRADE_HERO, data); 
-                var result = bool.Parse(response);
-                _logManager.Log($"result = {result}");
+                var response = await _unityCommunication.UnityToReact.CallBlockChain(command, data);
+                var result = JsonConvert.DeserializeObject<HeroActionResult>(response)
+                             ?? new HeroActionResult { success = false, txHash = "", details = "" };
+                _logManager.Log($"{command} success={result.success} tx={result.txHash}");
+                return result;
+            } catch (Exception ex) {
+                Debug.LogException(ex);
+                throw;
+            }
+        }
+
+        public Task<string> GetUpgradeNativePrice(int rarity, int level) {
+            return CallNativePrice(BlockChainCommand.GET_UPGRADE_NATIVE_PRICE,
+                new JObject { ["rarity"] = rarity, ["level"] = level });
+        }
+
+        public Task<string> GetResetSkillNativePrice(int rarity, int times) {
+            return CallNativePrice(BlockChainCommand.GET_RESET_SKILL_NATIVE_PRICE,
+                new JObject { ["rarity"] = rarity, ["times"] = times });
+        }
+
+        public Task<string> GetResetSkinNativePrice(int rarity) {
+            return CallNativePrice(BlockChainCommand.GET_RESET_SKIN_NATIVE_PRICE,
+                new JObject { ["rarity"] = rarity });
+        }
+
+        public Task<string> GetNativeRate() {
+            return CallNativePrice(BlockChainCommand.GET_NATIVE_RATE, new JObject());
+        }
+
+        // Giá luôn là chuỗi wei thập phân nguyên vẹn — không parse sang số ở tầng này, vì
+        // require(msg.value == price) lệch 1 wei là revert.
+        private async Task<string> CallNativePrice(string command, JObject data) {
+            try {
+                _logManager.Log();
+                var response = await _unityCommunication.UnityToReact.CallBlockChain(command, data);
+                var result = JsonConvert.DeserializeObject<string>(response) ?? "0";
+                _logManager.Log($"{command} = {result}");
                 return result;
             } catch (Exception ex) {
                 Debug.LogException(ex);
@@ -311,57 +370,6 @@ namespace App {
                 var response = await _unityCommunication.UnityToReact.CallBlockChain(BlockChainCommand.PROCESS_TOKEN_REQUESTS, data);
                 _logManager.Log($"response = {response}");
                 var result = JsonConvert.DeserializeObject<HeroProcessTokenResult>(response);
-                _logManager.Log($"result = {result}");
-                return result;
-            } catch (Exception ex) {
-                Debug.LogException(ex);
-                throw;
-            }
-        }
-
-        public async Task<bool> HasPendingHeroRandomization(int heroId) {
-            try {
-                _logManager.Log();
-                var data = new JObject {
-                    ["heroId"] = heroId
-                };
-                var response = await _unityCommunication.UnityToReact.CallBlockChain(BlockChainCommand.HAS_PENDING_HERO_RANDOMIZE, data);
-                var result = bool.Parse(response);
-                _logManager.Log($"result = {result}");
-                return result;
-            } catch (Exception ex) {
-                Debug.LogException(ex);
-                throw;
-            }
-        }
-
-        public async Task<bool> RandomizeHeroAbilities(string walletAddress, int heroId) {
-            try {
-                _logManager.Log();
-                var data = new JObject {
-                    ["walletAddress"] = walletAddress,
-                    ["heroId"] = heroId
-                };
-                var response = await _unityCommunication.UnityToReact.CallBlockChain(BlockChainCommand.RANDOMIZE_HERO_ABILITIES, data);
-                _logManager.Log($"response = {response}");
-                var result = bool.Parse(response);
-                _logManager.Log($"result = {result}");
-                return result;
-            } catch (Exception ex) {
-                Debug.LogException(ex);
-                throw;
-            }
-        }
-
-        public async Task<bool> ProcessHeroRandomizeAbilities(string walletAddress, int heroId) {
-            try {
-                _logManager.Log();
-                var data = new JObject {
-                    ["walletAddress"] = walletAddress,
-                    ["heroId"] = heroId
-                };
-                var response = await _unityCommunication.UnityToReact.CallBlockChain(BlockChainCommand.PROCESS_HERO_RANDOMIZE_AB, data);
-                var result = bool.Parse(response);
                 _logManager.Log($"result = {result}");
                 return result;
             } catch (Exception ex) {

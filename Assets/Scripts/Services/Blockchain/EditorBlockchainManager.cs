@@ -93,19 +93,41 @@ namespace App {
             return (await Call("IS_SUPER_BOX_ENABLED", null, false)).Value<bool>();
         }
 
-        public override async Task<bool> HasPendingHeroRandomization(int heroId) {
-            return (await Call("HAS_PENDING_HERO_RANDOMIZE", new { heroId }, false)).Value<bool>();
-        }
-
         public override async Task<bool> BuyHero(int count, BuyHeroCategory category, bool isHeroS) {
             var command = isHeroS ? "BUY_HERO_S" : "BUY_HERO";
             var r = await Call(command, new { walletAddress = Wallet, count, category = (int)category }, true);
             return r.Value<bool>();
         }
 
-        public override async Task<bool> UpgradeHero(int baseId, int materialId) {
-            var r = await Call("UPGRADE_HERO", new { walletAddress = Wallet, baseId, materialId }, true);
-            return r.Value<bool>();
+        public override async Task<HeroActionResult> UpgradeHero(int baseId, int materialId, string priceWei) {
+            var r = await Call("UPGRADE_HERO", new { walletAddress = Wallet, baseId, materialId, priceWei }, true);
+            return r.ToObject<HeroActionResult>();
+        }
+
+        public override async Task<HeroActionResult> ResetSkill(int heroId, string priceWei) {
+            var r = await Call("RESET_SKILL", new { walletAddress = Wallet, heroId, priceWei }, true);
+            return r.ToObject<HeroActionResult>();
+        }
+
+        public override async Task<HeroActionResult> ResetSkin(int heroId, string priceWei) {
+            var r = await Call("RESET_SKIN", new { walletAddress = Wallet, heroId, priceWei }, true);
+            return r.ToObject<HeroActionResult>();
+        }
+
+        public override async Task<string> GetUpgradeNativePrice(int rarity, int level) {
+            return (await Call("GET_UPGRADE_NATIVE_PRICE", new { rarity, level }, false)).Value<string>();
+        }
+
+        public override async Task<string> GetResetSkillNativePrice(int rarity, int times) {
+            return (await Call("GET_RESET_SKILL_NATIVE_PRICE", new { rarity, times }, false)).Value<string>();
+        }
+
+        public override async Task<string> GetResetSkinNativePrice(int rarity) {
+            return (await Call("GET_RESET_SKIN_NATIVE_PRICE", new { rarity }, false)).Value<string>();
+        }
+
+        public override async Task<string> GetNativeRate() {
+            return (await Call("GET_NATIVE_RATE", null, false)).Value<string>();
         }
 
         public override async Task<bool> ClaimHero() {
@@ -115,14 +137,6 @@ namespace App {
         public override async Task<HeroProcessTokenResult> ProcessTokenRequests() {
             return (await Call("PROCESS_TOKEN_REQUESTS", new { walletAddress = Wallet }, true))
                 .ToObject<HeroProcessTokenResult>();
-        }
-
-        public override async Task<bool> RandomizeHeroAbilities(int heroId) {
-            return (await Call("RANDOMIZE_HERO_ABILITIES", new { walletAddress = Wallet, heroId }, true)).Value<bool>();
-        }
-
-        public override async Task<bool> ProcessHeroRandomizeAbilities(int heroId) {
-            return (await Call("PROCESS_HERO_RANDOMIZE_AB", new { walletAddress = Wallet, heroId }, true)).Value<bool>();
         }
 
         public override async Task<bool> FusionHero(int[] heroIds) {

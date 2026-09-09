@@ -59,8 +59,8 @@ namespace App {
             return Task.FromResult(true);
         }
 
-        public virtual Task<bool> UpgradeHero(int baseId, int materialId) {
-            return Task.FromResult(true);
+        public virtual Task<HeroActionResult> UpgradeHero(int baseId, int materialId, string priceWei) {
+            return Task.FromResult(new HeroActionResult { success = true, txHash = "", details = "" });
         }
 
         public virtual Task<bool> ClaimHero() {
@@ -75,16 +75,28 @@ namespace App {
             return Task.FromResult(new HeroProcessTokenResult());
         }
 
-        public virtual Task<bool> HasPendingHeroRandomization(int heroId) {
-            return Task.FromResult(false);
+        public virtual Task<HeroActionResult> ResetSkill(int heroId, string priceWei) {
+            return Task.FromResult(new HeroActionResult { success = true, txHash = "", details = "" });
         }
 
-        public virtual Task<bool> RandomizeHeroAbilities(int heroId) {
-            return Task.FromResult(true);
+        public virtual Task<HeroActionResult> ResetSkin(int heroId, string priceWei) {
+            return Task.FromResult(new HeroActionResult { success = true, txHash = "", details = "" });
         }
 
-        public virtual Task<bool> ProcessHeroRandomizeAbilities(int heroId) {
-            return Task.FromResult(true);
+        public virtual Task<string> GetUpgradeNativePrice(int rarity, int level) {
+            return Task.FromResult("0");
+        }
+
+        public virtual Task<string> GetResetSkillNativePrice(int rarity, int times) {
+            return Task.FromResult("0");
+        }
+
+        public virtual Task<string> GetResetSkinNativePrice(int rarity) {
+            return Task.FromResult("0");
+        }
+
+        public virtual Task<string> GetNativeRate() {
+            return Task.FromResult("0");
         }
 
         public virtual Task<bool> IsSuperBoxEnabled() {

@@ -23,6 +23,7 @@ namespace App {
         public bool EnableUpgrade { get; }
         public bool EnableRepairShield { get; }
         public bool EnableResetSkill { get; }
+        public bool EnableResetSkin { get; }
         public bool EnableCreateAccount { get; }
         public bool EnableRename { get; }
         public bool EnableShopForUserFi { get; }
@@ -70,9 +71,13 @@ namespace App {
             IsUsingMetaMask = walletOnly;
             EnableControlMining = false;
             EnableDeposit = walletOnly || AppConfig.IsAirDrop();
-            EnableUpgrade = false;
+            // Ba tính năng BHero trả bằng native (BNB / POL) sống trong Smithy. Cần ví tự ký tx,
+            // và contract chỉ deploy trên BSC + Polygon.
+            var nativeHeroActions = walletOnly && (bscOnly || polygonOnly);
+            EnableUpgrade = nativeHeroActions;
             EnableRepairShield = walletOnly;
-            EnableResetSkill = false;
+            EnableResetSkill = nativeHeroActions;
+            EnableResetSkin = nativeHeroActions;
             EnableCreateAccount = userFi;
             EnableRename = userFi;
             EnableShopForUserFi = walletOnly || AppConfig.IsAirDrop();

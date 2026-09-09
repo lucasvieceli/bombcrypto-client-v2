@@ -5,8 +5,6 @@ import {Contract, ethers, TransactionResponse} from "ethers";
 import CoinToken from "./CoinToken.ts";
 import {toNumberOrNull, toNumberOrZero} from "../../../utils/Number.ts";
 
-const HERO_S_PRICE_MULTIPLIER = 5;
-
 export default class BHeroToken extends NFTToken {
     private readonly _bcoinToken: CoinToken;
 
@@ -99,6 +97,16 @@ export default class BHeroToken extends NFTToken {
     async getTokenDetails(userAddress: string): Promise<TransactionResponse> {
         const contract = await this.getContract();
         return await contract.getTokenDetailsByOwner(userAddress);
+    }
+
+    // The hero's 256-bit details word, as a decimal string. Read straight after a mutating tx so
+    // the client can re-render without waiting for the server sync to catch up. Reads the public
+    // `tokenDetails` mapping — the `getTokenDetail` entry in HeroTokenAbi.json is stale and reverts
+    // on the deployed implementation.
+    async getTokenDetail(heroId: number): Promise<string> {
+        const contract = await this.getContract();
+        const value = await contract.tokenDetails(heroId);
+        return value.toString();
     }
 
     async isSuperBoxEnabled(): Promise<boolean> {
@@ -282,63 +290,4 @@ export default class BHeroToken extends NFTToken {
         return task;
     }
 
-    async upgrade(userAddress: string, baseId: number, materialId: number): Promise<boolean> {
-        try {
-            const cost = await this.getUpgradeCost(5, 3);
-            const multiplier = ethers.toBigInt(HERO_S_PRICE_MULTIPLIER);
-            const costBN = ethers.toBigInt(cost) * multiplier;
-            await this._bcoinToken.checkAllowance(userAddress, this._address, costBN);
-
-            const contract = await this.getContract();
-            const estimateGas = await contract.upgrade.estimateGas(baseId, materialId);
-            const options = await getDoubleGasFeeOptionV2(estimateGas);
-            const transaction = await contract.upgrade(baseId, materialId, options);
-
-            await waitForReceipt(transaction);
-            return true;
-        } catch (ex) {
-            console.error(`exception ${ex}`);
-            return false;
-        }
-    }
-
-    async hasPendingRandomization(heroId: number): Promise<boolean> {
-        const contract = await this.getContract();
-        return await contract.hasPendingRandomization(heroId);
-    }
-
-    async randomizeAbilities(userAddress: string, heroId: number): Promise<boolean> {
-        try {
-            const cost = await this.getRandomizeAbilityCost(5, 10);
-            const multiplier = ethers.toBigInt(HERO_S_PRICE_MULTIPLIER);
-            const costBN = ethers.toBigInt(cost) * multiplier;
-            await this._bcoinToken.checkAllowance(userAddress, this._address, costBN);
-
-            const contract = await this.getContract();
-            const estimateGas = await contract.randomizeAbilities.estimateGas(heroId);
-            const options = await getDoubleGasFeeOptionV2(estimateGas);
-            const transaction = await contract.randomizeAbilities(heroId, options);
-
-            await waitForReceipt(transaction);
-            return true;
-        } catch (ex) {
-            console.error(`exception ${ex}`);
-            return false;
-        }
-    }
-
-    async processRandomizeAbilities(heroId: number): Promise<boolean> {
-        try {
-            const contract = await this.getContract();
-            const estimateGas = await contract.processRandomizeAbilities.estimateGas(heroId);
-            const options = await getDoubleGasFeeOptionV2(estimateGas);
-            const transaction = await contract.processRandomizeAbilities(heroId, options);
-
-            await waitForReceipt(transaction);
-            return true;
-        } catch (ex) {
-            console.error(`exception ${ex}`);
-            return false;
-        }
-    }
 }

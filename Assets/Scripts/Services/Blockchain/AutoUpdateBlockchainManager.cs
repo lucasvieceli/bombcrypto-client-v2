@@ -91,8 +91,8 @@ namespace App {
             return _manager.BuyHero(count, category, isHeroS);
         }
         
-        public Task<bool> UpgradeHero(int baseId, int materialId) {
-            return _manager.UpgradeHero(baseId, materialId);
+        public Task<HeroActionResult> UpgradeHero(int baseId, int materialId, string priceWei) {
+            return _manager.UpgradeHero(baseId, materialId, priceWei);
         }
 
         public Task<bool> ClaimHero() {
@@ -107,16 +107,28 @@ namespace App {
             return _manager.ProcessTokenRequests();
         }
 
-        public Task<bool> HasPendingHeroRandomization(int heroId) {
-            return _manager.HasPendingHeroRandomization(heroId);
+        public Task<HeroActionResult> ResetSkill(int heroId, string priceWei) {
+            return _manager.ResetSkill(heroId, priceWei);
         }
 
-        public Task<bool> RandomizeHeroAbilities(int heroId) {
-            return _manager.RandomizeHeroAbilities(heroId);
+        public Task<HeroActionResult> ResetSkin(int heroId, string priceWei) {
+            return _manager.ResetSkin(heroId, priceWei);
         }
 
-        public Task<bool> ProcessHeroRandomizeAbilities(int heroId) {
-            return _manager.ProcessHeroRandomizeAbilities(heroId);
+        public Task<string> GetUpgradeNativePrice(int rarity, int level) {
+            return _manager.GetUpgradeNativePrice(rarity, level);
+        }
+
+        public Task<string> GetResetSkillNativePrice(int rarity, int times) {
+            return _manager.GetResetSkillNativePrice(rarity, times);
+        }
+
+        public Task<string> GetResetSkinNativePrice(int rarity) {
+            return _manager.GetResetSkinNativePrice(rarity);
+        }
+
+        public Task<string> GetNativeRate() {
+            return _manager.GetNativeRate();
         }
 
         public async Task<bool> IsSuperBoxEnabled() {

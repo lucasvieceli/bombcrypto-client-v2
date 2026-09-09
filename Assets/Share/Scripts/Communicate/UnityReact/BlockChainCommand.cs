@@ -17,9 +17,12 @@ namespace Share.Scripts.Communicate.UnityReact {
         public const string CLAIM_HERO = "CLAIM_HERO";
         public const string PROCESS_TOKEN_REQUESTS = "PROCESS_TOKEN_REQUESTS";
         public const string PROCESS_TOKEN_REQUESTS_V2 = "PROCESS_TOKEN_REQUESTS_V2";
-        public const string HAS_PENDING_HERO_RANDOMIZE = "HAS_PENDING_HERO_RANDOMIZE";
-        public const string RANDOMIZE_HERO_ABILITIES = "RANDOMIZE_HERO_ABILITIES";
-        public const string PROCESS_HERO_RANDOMIZE_AB = "PROCESS_HERO_RANDOMIZE_AB";
+        public const string RESET_SKILL = "RESET_SKILL";
+        public const string RESET_SKIN = "RESET_SKIN";
+        public const string GET_UPGRADE_NATIVE_PRICE = "GET_UPGRADE_NATIVE_PRICE";
+        public const string GET_RESET_SKILL_NATIVE_PRICE = "GET_RESET_SKILL_NATIVE_PRICE";
+        public const string GET_RESET_SKIN_NATIVE_PRICE = "GET_RESET_SKIN_NATIVE_PRICE";
+        public const string GET_NATIVE_RATE = "GET_NATIVE_RATE";
         public const string IS_SUPER_BOX_ENABLED = "IS_SUPER_BOX_ENABLED";
         public const string GET_HERO_S_PRICE = "GET_HERO_S_PRICE";
         public const string BUY_HERO_S = "BUY_HERO_S";

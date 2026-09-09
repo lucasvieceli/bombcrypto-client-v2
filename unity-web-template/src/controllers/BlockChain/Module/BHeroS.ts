@@ -5,6 +5,12 @@ import CoinToken from "./CoinToken.ts";
 import BHeroToken from "./BHero.ts";
 import {toNumberOrZero} from "../../../utils/Number.ts";
 
+export interface HeroActionResult {
+    success: boolean;
+    txHash: string;
+    details: string;
+}
+
 export default class BHeroSToken extends GeneralContract {
     private _bheroToken: BHeroToken;
     private _bcoinToken: CoinToken;
@@ -178,6 +184,74 @@ export default class BHeroSToken extends GeneralContract {
         } catch (ex) {
             console.error(`exception ${ex}`);
             return false;
+        }
+    }
+
+    // ── Native-paid BHero actions (upgrade / reset skill / reset skin) ────────────────────
+    // All three are payable on BHeroS with a strict require(msg.value == price) and no refund of
+    // excess, so priceWei is relayed verbatim as an exact wei string and must have been read
+    // immediately before signing. The details word is re-read after the receipt so the caller can
+    // render the result without waiting for the server sync.
+
+    async getUpgradeNativePrice(rarity: number, level: number): Promise<string> {
+        const contract = await this.getDesignContract();
+        const value = await contract.getUpgradeNativePrice(rarity, level);
+        return value.toString();
+    }
+
+    async getResetSkillNativePrice(rarity: number, times: number): Promise<string> {
+        const contract = await this.getDesignContract();
+        const value = await contract.getResetSkillNativePrice(rarity, times);
+        return value.toString();
+    }
+
+    async getResetSkinNativePrice(rarity: number): Promise<string> {
+        const contract = await this.getDesignContract();
+        const value = await contract.getResetSkinNativePrice(rarity);
+        return value.toString();
+    }
+
+    async getNativeRate(): Promise<string> {
+        const contract = await this.getDesignContract();
+        const value = await contract.getNativeRate();
+        return value.toString();
+    }
+
+    async upgradeHero(baseId: number, materialId: number, priceWei: string): Promise<HeroActionResult> {
+        return this.sendHeroAction(baseId, priceWei,
+            (contract, value) => contract.upgradeHero.estimateGas(baseId, materialId, { value }),
+            (contract, options) => contract.upgradeHero(baseId, materialId, options));
+    }
+
+    async resetSkill(heroId: number, priceWei: string): Promise<HeroActionResult> {
+        return this.sendHeroAction(heroId, priceWei,
+            (contract, value) => contract.resetSkill.estimateGas(heroId, { value }),
+            (contract, options) => contract.resetSkill(heroId, options));
+    }
+
+    async resetSkin(heroId: number, priceWei: string): Promise<HeroActionResult> {
+        return this.sendHeroAction(heroId, priceWei,
+            (contract, value) => contract.resetSkin.estimateGas(heroId, { value }),
+            (contract, options) => contract.resetSkin(heroId, options));
+    }
+
+    private async sendHeroAction(heroId: number, priceWei: string,
+                                 estimate: (contract: Contract, value: bigint) => Promise<bigint>,
+                                 send: (contract: Contract, options: object) => Promise<any>
+    ): Promise<HeroActionResult> {
+        try {
+            const value = BigInt(priceWei);
+            const contract = await this.getContract();
+            const estimateGas = await estimate(contract, value);
+            const options = await getDoubleGasFeeOptionV2(estimateGas);
+            const transaction = await send(contract, { ...options, value });
+            const txHash = transaction.hash ?? "";
+            await waitForReceipt(transaction);
+            const details = await this._bheroToken.getTokenDetail(heroId);
+            return { success: true, txHash, details };
+        } catch (ex) {
+            console.error(`exception ${ex}`);
+            return { success: false, txHash: "", details: "" };
         }
     }
 

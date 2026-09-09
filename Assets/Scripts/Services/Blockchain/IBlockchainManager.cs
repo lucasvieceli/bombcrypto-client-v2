@@ -74,6 +74,18 @@ namespace App {
         public HeroProcessTokenResult processResult;
     }
 
+    /// <summary>
+    /// Kết quả của ba hành động BHeroS trả bằng native (upgrade / reset skill / reset skin).
+    /// <see cref="details"/> là details word đọc lại từ chain ngay sau receipt, nên UI reveal
+    /// dựng được hero mới mà không phải chờ server sync. Rỗng khi tx thất bại.
+    /// </summary>
+    [Serializable]
+    public class HeroActionResult {
+        public bool success;
+        public string txHash;
+        public string details;
+    }
+
     [Serializable]
     public class StakeResult {
         public bool success;
@@ -146,13 +158,21 @@ namespace App {
         Task<int> GetGiveAwayHero();
         Task<ProcessToken> GetPendingHero();
         Task<bool> BuyHero(int count, BuyHeroCategory category, bool isHeroS);
-        Task<bool> UpgradeHero(int baseId, int materialId);
+        Task<HeroActionResult> UpgradeHero(int baseId, int materialId, string priceWei);
         Task<bool> ClaimHero();
         Task<bool> ClaimGiveAwayHero();
         Task<HeroProcessTokenResult> ProcessTokenRequests();
-        Task<bool> HasPendingHeroRandomization(int heroId);
-        Task<bool> RandomizeHeroAbilities(int heroId);
-        Task<bool> ProcessHeroRandomizeAbilities(int heroId);
+        // BHeroS trả bằng native (BNB / POL). Contract dùng require(msg.value == price) và không
+        // hoàn phần dư, nên giá là chuỗi wei chính xác: đọc ngay trước khi ký, không cache từ lúc
+        // mở dialog, và không bao giờ cho đi qua double. level là index 0-based (= level hiển thị - 1).
+        // times là randomizeAbilityCounter hiện tại của hero. Giá 0 nghĩa là tính năng đóng cho
+        // rarity đó -> ẩn nút, đừng gọi (contract revert).
+        Task<HeroActionResult> ResetSkill(int heroId, string priceWei);
+        Task<HeroActionResult> ResetSkin(int heroId, string priceWei);
+        Task<string> GetUpgradeNativePrice(int rarity, int level);
+        Task<string> GetResetSkillNativePrice(int rarity, int times);
+        Task<string> GetResetSkinNativePrice(int rarity);
+        Task<string> GetNativeRate();
         Task<bool> IsSuperBoxEnabled();
         Task<int> GetHouseLimit();
         Task<double[]> GetHousePrice();
