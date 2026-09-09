@@ -103,7 +103,7 @@ export const BNB_TESTNET_RPC: NetworkRpc = {
     chainId: 97,
     chainIdHex: '0x61',
     chainName: 'Binance Smart Chain Testnet',
-    rpcUrl: 'https://data-seed-prebsc-1-s1.binance.org:8545/',
+    rpcUrl: 'https://bsc-testnet.bnbchain.org',
     currencySymbol: 'BNB',
     decimals: 18,
     blockExplorerUrl: 'https://testnet.bscscan.com/'

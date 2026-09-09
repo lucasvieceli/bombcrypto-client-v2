@@ -24,7 +24,7 @@ const HARDCODE_BSC_MAINNET: string[] = [
 const HARDCODE_BSC_TESTNET: string[] = [
     'https://bsc-testnet-dataseed.bnbchain.org',
     'https://bsc-testnet.bnbchain.org',
-    'https://bsc-prebsc-dataseed.bnbchain.org',
+    // 'https://bsc-prebsc-dataseed.bnbchain.org',
 ];
 
 const HARDCODE_POLYGON_MAINNET: string[] = [
