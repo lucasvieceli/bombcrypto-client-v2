@@ -15,6 +15,7 @@ namespace App {
         public bool EnableUpgrade => false;
         public bool EnableRepairShield => true;
         public bool EnableResetSkill => true;
+        public bool EnableResetSkin => false;
         public bool EnableCreateAccount => true;
         public bool EnableRename => true;
         public bool EnableShopForUserFi => true;

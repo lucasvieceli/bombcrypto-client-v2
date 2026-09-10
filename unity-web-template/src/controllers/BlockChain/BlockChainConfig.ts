@@ -35,9 +35,12 @@ export class BlockChainConfig{
         this.actions.set(BlockChainCommand.CLAIM_HERO, this._contractManager.claimHero.bind(this._contractManager));
         this.actions.set(BlockChainCommand.PROCESS_TOKEN_REQUESTS, this._contractManager.processTokenRequests.bind(this._contractManager));
         this.actions.set(BlockChainCommand.PROCESS_TOKEN_REQUESTS_V2, this._contractManager.processTokenRequestsV2.bind(this._contractManager));
-        this.actions.set(BlockChainCommand.HAS_PENDING_HERO_RANDOMIZE, this._contractManager.hasPendingHeroRandomization.bind(this._contractManager));
-        this.actions.set(BlockChainCommand.RANDOMIZE_HERO_ABILITIES, this._contractManager.randomizeHeroAbilities.bind(this._contractManager));
-        this.actions.set(BlockChainCommand.PROCESS_HERO_RANDOMIZE_AB, this._contractManager.processHeroRandomizeAbilities.bind(this._contractManager));
+        this.actions.set(BlockChainCommand.RESET_SKILL, this._contractManager.resetSkill.bind(this._contractManager));
+        this.actions.set(BlockChainCommand.RESET_SKIN, this._contractManager.resetSkin.bind(this._contractManager));
+        this.actions.set(BlockChainCommand.GET_UPGRADE_NATIVE_PRICE, this._contractManager.getUpgradeNativePrice.bind(this._contractManager));
+        this.actions.set(BlockChainCommand.GET_RESET_SKILL_NATIVE_PRICE, this._contractManager.getResetSkillNativePrice.bind(this._contractManager));
+        this.actions.set(BlockChainCommand.GET_RESET_SKIN_NATIVE_PRICE, this._contractManager.getResetSkinNativePrice.bind(this._contractManager));
+        this.actions.set(BlockChainCommand.GET_NATIVE_RATE, this._contractManager.getNativeRate.bind(this._contractManager));
         this.actions.set(BlockChainCommand.IS_SUPER_BOX_ENABLED, this._contractManager.isSuperBoxEnabled.bind(this._contractManager));
 
         this.actions.set(BlockChainCommand.GET_HERO_S_PRICE, this._contractManager.getHeroSPrice.bind(this._contractManager));

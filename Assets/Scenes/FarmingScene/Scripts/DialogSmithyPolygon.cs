@@ -12,7 +12,10 @@ namespace Scenes.FarmingScene.Scripts {
         RepairShield,
         UpgradeShield,
         Material,
-        BuyMaterial
+        BuyMaterial,
+        UpgradeHeroLevel,
+        ResetSkill,
+        ResetSkin
     }
 
     public class DialogSmithyPolygon : Dialog, IDialogRepairShield {
@@ -73,6 +76,16 @@ namespace Scenes.FarmingScene.Scripts {
             upgradeShield.SetInfo(DialogCanvas, OnChooseHero);
         }
 
+        /// <summary>
+        /// Mở Smithy thẳng vào tab UPGRADE BHERO LEVEL với hero đã chọn sẵn. Dùng cho nút Upgrade
+        /// trong DialogInventory — trước đây nút đó trỏ vào DialogUpgrade, prefab và script đều đã
+        /// bị xoá.
+        /// </summary>
+        public void InitForUpgradeHeroLevel(HeroId idHero) {
+            SetResetThisHero(_playerStoreManager.GetPlayerDataFromId(idHero));
+            OnDidShow(OpenUpgradeHeroLevelDialog);
+        }
+
         public void Init(HeroId idResetThisHero) {
             var resetThisHero = _playerStoreManager.GetPlayerDataFromId(idResetThisHero);
             SetResetThisHero(resetThisHero);
@@ -123,6 +136,38 @@ namespace Scenes.FarmingScene.Scripts {
             }
         }
         
+        public void OpenUpgradeHeroLevelDialog() {
+            OpenNativeActionTab<UpgradeHeroLevelPolygon>(Smithy.UpgradeHeroLevel);
+        }
+
+        public void OpenResetSkillDialog() {
+            OpenNativeActionTab<ResetSkillPolygon>(Smithy.ResetSkill);
+        }
+
+        public void OpenResetSkinDialog() {
+            OpenNativeActionTab<ResetSkinPolygon>(Smithy.ResetSkin);
+        }
+
+        // Ba tab trả bằng native dùng chung một hợp đồng (SetInfo + Init) nên mở giống hệt nhau.
+        // Prefab iPad không còn được phát triển và không có ba tab này, nên bỏ qua trong im lặng
+        // thay vì ném lỗi khi mảng items ngắn.
+        private void OpenNativeActionTab<T>(Smithy tab) where T : NativeHeroActionPolygon {
+            var index = (int) tab;
+            if (index >= items.Length) {
+                return;
+            }
+            _soundManager.PlaySound(Audio.Tap);
+            _smithy = tab;
+            ShowItems(items[index]);
+            ShowButtons(index);
+            var panel = items[index].GetComponent<T>();
+            if (!panel) {
+                return;
+            }
+            panel.SetInfo(DialogCanvas, OnChooseHero);
+            panel.Init(_resetThisHero);
+        }
+
         public void OpenBuyMaterialDialog() {
             _soundManager.PlaySound(Audio.Tap);
             _smithy = Smithy.BuyMaterial;

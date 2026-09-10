@@ -83,8 +83,8 @@ namespace App {
             return _bridge.BuyHero(walletAddress, count, category, isHeroS);
         }
 
-        public Task<bool> UpgradeHero(string walletAddress, int baseId, int materialId) {
-            return Task.FromResult(false);
+        public Task<HeroActionResult> UpgradeHero(string walletAddress, int baseId, int materialId, string priceWei) {
+            return Task.FromResult(new HeroActionResult { success = false, txHash = "", details = "" });
         }
 
         public Task<bool> ClaimHero(string walletAddress) {
@@ -108,16 +108,28 @@ namespace App {
             }
         }
 
-        public Task<bool> HasPendingHeroRandomization(int heroId) {
-            return Task.FromResult(false);
+        public Task<HeroActionResult> ResetSkill(string walletAddress, int heroId, string priceWei) {
+            return Task.FromResult(new HeroActionResult { success = false, txHash = "", details = "" });
         }
 
-        public Task<bool> RandomizeHeroAbilities(string walletAddress, int heroId) {
-            return Task.FromResult(false);
+        public Task<HeroActionResult> ResetSkin(string walletAddress, int heroId, string priceWei) {
+            return Task.FromResult(new HeroActionResult { success = false, txHash = "", details = "" });
         }
 
-        public Task<bool> ProcessHeroRandomizeAbilities(string walletAddress, int heroId) {
-            return Task.FromResult(false);
+        public Task<string> GetUpgradeNativePrice(int rarity, int level) {
+            return Task.FromResult("0");
+        }
+
+        public Task<string> GetResetSkillNativePrice(int rarity, int times) {
+            return Task.FromResult("0");
+        }
+
+        public Task<string> GetResetSkinNativePrice(int rarity) {
+            return Task.FromResult("0");
+        }
+
+        public Task<string> GetNativeRate() {
+            return Task.FromResult("0");
         }
 
         public Task<bool> IsSuperBoxEnabled() {

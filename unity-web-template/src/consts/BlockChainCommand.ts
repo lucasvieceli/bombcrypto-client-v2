@@ -16,9 +16,12 @@ class BlockChainCommand {
     static readonly CLAIM_HERO: string = "CLAIM_HERO";
     static readonly PROCESS_TOKEN_REQUESTS: string = "PROCESS_TOKEN_REQUESTS";
     static readonly PROCESS_TOKEN_REQUESTS_V2: string = "PROCESS_TOKEN_REQUESTS_V2";
-    static readonly HAS_PENDING_HERO_RANDOMIZE: string = "HAS_PENDING_HERO_RANDOMIZE";
-    static readonly RANDOMIZE_HERO_ABILITIES: string = "RANDOMIZE_HERO_ABILITIES";
-    static readonly PROCESS_HERO_RANDOMIZE_AB: string = "PROCESS_HERO_RANDOMIZE_AB";
+    static readonly RESET_SKILL: string = "RESET_SKILL";
+    static readonly RESET_SKIN: string = "RESET_SKIN";
+    static readonly GET_UPGRADE_NATIVE_PRICE: string = "GET_UPGRADE_NATIVE_PRICE";
+    static readonly GET_RESET_SKILL_NATIVE_PRICE: string = "GET_RESET_SKILL_NATIVE_PRICE";
+    static readonly GET_RESET_SKIN_NATIVE_PRICE: string = "GET_RESET_SKIN_NATIVE_PRICE";
+    static readonly GET_NATIVE_RATE: string = "GET_NATIVE_RATE";
     static readonly IS_SUPER_BOX_ENABLED: string = "IS_SUPER_BOX_ENABLED";
     static readonly GET_HERO_S_PRICE: string = "GET_HERO_S_PRICE";
     static readonly BUY_HERO_S: string = "BUY_HERO_S";

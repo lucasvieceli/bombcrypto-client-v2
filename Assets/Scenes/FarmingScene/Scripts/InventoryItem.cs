@@ -345,9 +345,11 @@ namespace Scenes.FarmingScene.Scripts {
         }
 
         private bool ThisHeroHaveStake() {
-            //Nếu ko phải chọn hero S này để fusion hoặc burn thì ko cần kiểm tra có phải S fake hay ko
+            //Nếu ko phải chọn hero S này để fusion, burn hoặc làm nguyên liệu upgrade (cũng bị
+            //đốt) thì ko cần kiểm tra có phải S fake hay ko
             if (_chooseMode != DialogInventory.ChooseMode.InventoryFusion
-                && _chooseMode != DialogInventory.ChooseMode.InventoryBurn) {
+                && _chooseMode != DialogInventory.ChooseMode.InventoryBurn
+                && _chooseMode != DialogInventory.ChooseMode.Upgrade) {
                 return false;
             }
             //Ko phải heroS mà có shield => hero S fake

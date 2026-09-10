@@ -37,7 +37,8 @@ namespace Scenes.FarmingScene.Scripts {
         void SetChooseHeroForInventoryBurnHero(HeroId[] excludeHeroIds, Action<PlayerData[]> callBackBurnHeroId);
         void SetChooseHeroForRepairShield(HeroId[] excludeHeroIds, Action<PlayerData[]> callBackSelected);
         void SetChooseHeroForResetSkill(Action<HeroId> onSelectedCallback);
-        void SetChooseHeroForUpgrade(HeroId baseHeroId, int baseHeroLevel, Action<HeroId> onSelectAsMaterialCallback);
+        void SetChooseHeroForUpgrade(HeroId baseHeroId, int baseHeroLevel, HeroId[] excludeHeroIds,
+            Action<HeroId> onSelectAsMaterialCallback);
     }
     
     public static class DialogInventoryCreator {
@@ -751,9 +752,20 @@ namespace Scenes.FarmingScene.Scripts {
         }
 
         public void OnUpgradeBtnClicked() {
-            // Hiện tại trong FeatureManager đang set EnableUpgrade = false
-            // Và DialogUpgrade (prefab và script) đá xóa => sau này nếu bật lại true => thì cần phải thiết kế lại DialogUpgrade
-            throw new System.NotImplementedException("Upgrade chưa được thiết lập");
+            if (SelectId == default) {
+                return;
+            }
+            ServiceLocator.Instance.Resolve<ISoundManager>().PlaySound(Audio.Tap);
+            var heroId = SelectId;
+            UniTask.Void(async () => {
+                var smithy = await DialogSmithyPolygon.Create();
+                if (!this) {
+                    return;
+                }
+                smithy.InitForUpgradeHeroLevel(heroId);
+                smithy.Show(DialogCanvas);
+                Hide();
+            });
         }
 
         private async void OnSyncHero(ISyncHeroResponse _) {
@@ -1149,11 +1161,14 @@ namespace Scenes.FarmingScene.Scripts {
         /// <summary>
         /// Cho phép tận dụng Dialog Inventory để chọn Heroes Material phục vụ cho Dialog Upgrade
         /// </summary>
-        public void SetChooseHeroForUpgrade(HeroId baseHeroId, int baseHeroLevel,
+        public void SetChooseHeroForUpgrade(HeroId baseHeroId, int baseHeroLevel, HeroId[] excludeHeroIds,
             Action<HeroId> onSelectAsMaterialCallback) {
             _chooseMode = ChooseMode.Upgrade;
             _baseHeroId = baseHeroId;
             _baseHeroLevel = baseHeroLevel;
+            // Loại qua exclude list vì nó được áp TRƯỚC khi phân trang.
+            // FilterHeroesSuitableToUpgrade() chỉ lọc trong phạm vi trang hiện tại nên không đủ.
+            _excludeHeroIds = excludeHeroIds;
             _onSelectAsMaterialCallback = onSelectAsMaterialCallback;
             SelectId = default;
             ScrollValue = -1;

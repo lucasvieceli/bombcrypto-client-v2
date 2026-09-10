@@ -30,6 +30,7 @@ namespace App {
         public bool EnableUpgrade => _bridge.EnableUpgrade;
         public bool EnableRepairShield => _bridge.EnableRepairShield;
         public bool EnableResetSkill => _bridge.EnableResetSkill;
+        public bool EnableResetSkin => _bridge.EnableResetSkin;
         public bool EnableCreateAccount => _bridge.EnableCreateAccount;
         public bool EnableRename => _bridge.EnableRename;
         public bool EnableShopForUserFi => _bridge.EnableShopForUserFi;

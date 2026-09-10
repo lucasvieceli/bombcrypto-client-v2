@@ -180,8 +180,37 @@ export class ContractManager {
     }
 
     async upgradeHero(args: string): Promise<string> {
-        const data = JSON.parse(args) as { walletAddress: string, baseId: number, materialId: number };
-        return JSON.stringify(await this._bheroToken.upgrade(data.walletAddress, data.baseId, data.materialId));
+        const data = JSON.parse(args) as { baseId: number, materialId: number, priceWei: string };
+        return JSON.stringify(await this._bHeroSToken.upgradeHero(data.baseId, data.materialId, data.priceWei));
+    }
+
+    async resetSkill(args: string): Promise<string> {
+        const data = JSON.parse(args) as { heroId: number, priceWei: string };
+        return JSON.stringify(await this._bHeroSToken.resetSkill(data.heroId, data.priceWei));
+    }
+
+    async resetSkin(args: string): Promise<string> {
+        const data = JSON.parse(args) as { heroId: number, priceWei: string };
+        return JSON.stringify(await this._bHeroSToken.resetSkin(data.heroId, data.priceWei));
+    }
+
+    async getUpgradeNativePrice(args: string): Promise<string> {
+        const data = JSON.parse(args) as { rarity: number, level: number };
+        return JSON.stringify(await this._bHeroSToken.getUpgradeNativePrice(data.rarity, data.level));
+    }
+
+    async getResetSkillNativePrice(args: string): Promise<string> {
+        const data = JSON.parse(args) as { rarity: number, times: number };
+        return JSON.stringify(await this._bHeroSToken.getResetSkillNativePrice(data.rarity, data.times));
+    }
+
+    async getResetSkinNativePrice(args: string): Promise<string> {
+        const data = JSON.parse(args) as { rarity: number };
+        return JSON.stringify(await this._bHeroSToken.getResetSkinNativePrice(data.rarity));
+    }
+
+    async getNativeRate(): Promise<string> {
+        return JSON.stringify(await this._bHeroSToken.getNativeRate());
     }
 
     async claimHero(args: string): Promise<string> {
@@ -196,21 +225,6 @@ export class ContractManager {
     async processTokenRequestsV2(args: string): Promise<string> {
         const data = JSON.parse(args) as { walletAddress: string };
         return JSON.stringify(await this._bheroToken.processTokenRequestsV2(data.walletAddress));
-    }
-
-    async hasPendingHeroRandomization(args: string): Promise<string> {
-        const data = JSON.parse(args) as { heroId: number };
-        return JSON.stringify(await this._bheroToken.hasPendingRandomization(data.heroId));
-    }
-
-    async randomizeHeroAbilities(args: string): Promise<string> {
-        const data = JSON.parse(args) as { walletAddress: string, heroId: number };
-        return JSON.stringify(await this._bheroToken.randomizeAbilities(data.walletAddress, data.heroId));
-    }
-
-    async processHeroRandomizeAbilities(args: string): Promise<string> {
-        const data = JSON.parse(args) as { heroId: number };
-        return JSON.stringify(await this._bheroToken.processRandomizeAbilities(data.heroId));
     }
 
     // @ts-ignore

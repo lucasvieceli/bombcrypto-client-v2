@@ -11,6 +11,7 @@ namespace App {
         bool EnableUpgrade { get; }
         bool EnableRepairShield { get; }
         bool EnableResetSkill { get; }
+        bool EnableResetSkin { get; }
         bool EnableCreateAccount { get; }
         bool EnableRename { get; }
         bool EnableShopForUserFi { get; }
